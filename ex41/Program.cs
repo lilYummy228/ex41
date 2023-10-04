@@ -182,7 +182,6 @@ namespace ex41
                     }
                 }
             }
-
         }
 
         public void DeletePlayer()
@@ -201,7 +200,6 @@ namespace ex41
                     Console.WriteLine($"Игрок под номером {number} успешно удален...");
                 }
             }
-
         }
 
         public bool CheckInput(bool isNumber, int number)
