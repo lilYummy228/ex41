@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ex41
 {
@@ -218,16 +215,16 @@ namespace ex41
 
     class Player
     {
-        public string NickName { get; private set; }
-        public int Level { get; private set; }
-        public bool IsBanned { get; private set; }
-
         public Player(string nickName, int level, bool isBanned)
         {
             NickName = nickName;
             Level = level;
             IsBanned = isBanned;
         }
+
+        public string NickName { get; private set; }
+        public int Level { get; private set; }
+        public bool IsBanned { get; private set; }
 
         public void ShowInfo()
         {
