@@ -242,7 +242,6 @@ namespace ex41
             }
         }
 
-
         class Player
         {
             public Player(string nickName, int level, bool isBanned)
