@@ -23,9 +23,8 @@ namespace ex41
                 Console.Write($"{CommandAddPlayer} - Добавить игрока\n{CommandBanPlayer} - Забанить игрока\n{CommandUnBanPlayer} - Разбанить игрока\n" +
                     $"{CommandDeletePlayer} - Удалить игрока\n{CommandShowAllPlayers} - Показать список всех игроков\n" +
                     $"{CommandExit} - Выход из программы\n\nКакую операцию хотите выполнить? ");
-                string chosenOperation = Console.ReadLine();
 
-                switch (chosenOperation)
+                switch (Console.ReadLine())
                 {
                     case CommandAddPlayer:
                         database.AddPlayer();
