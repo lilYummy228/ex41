@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 
 namespace ex41
 {
@@ -21,9 +20,13 @@ namespace ex41
             while (isOpen)
             {
                 Console.WriteLine("База данных игроков\n");
-                Console.Write($"{CommandAddPlayer} - Добавить игрока\n{CommandBanPlayer} - Забанить игрока\n{CommandUnBanPlayer} - Разбанить игрока\n" +
-                    $"{CommandDeletePlayer} - Удалить игрока\n{CommandShowAllPlayers} - Показать список всех игроков\n" +
-                    $"{CommandExit} - Выход из программы\n\nКакую операцию хотите выполнить? ");
+                Console.Write($"{CommandAddPlayer} - Добавить игрока\n" +
+                    $"{CommandBanPlayer} - Забанить игрока\n" +
+                    $"{CommandUnBanPlayer} - Разбанить игрока\n" +
+                    $"{CommandDeletePlayer} - Удалить игрока\n" +
+                    $"{CommandShowAllPlayers} - Показать список всех игроков\n" +
+                    $"{CommandExit} - Выход из программы\n" +
+                    $"\nКакую операцию хотите выполнить? ");
 
                 switch (Console.ReadLine())
                 {
@@ -116,7 +119,7 @@ namespace ex41
             Console.Clear();
             Console.WriteLine("Список всех игроков:");
 
-            if (_players.Count != 0)
+            if (IsFilled())
             {
                 foreach (var player in _players)
                 {
@@ -124,10 +127,6 @@ namespace ex41
                     _players[player.Key].ShowInfo();
                     Console.WriteLine();
                 }
-            }
-            else
-            {
-                Console.WriteLine("Список игроков пуст...");
             }
         }
 
@@ -137,31 +136,18 @@ namespace ex41
 
             if (IsFilled())
             {
-                Console.Write("\nИгрока под каким ID вы хотите забанить? ");
-
-                if (int.TryParse(Console.ReadLine(), out int id))
+                if (IsPlayerFoundById(out Player player))
                 {
-                    if (_players.ContainsKey(id))
+                    if (player.IsBanned == false)
                     {
-                        if (_players[id].IsBanned == false)
-                        {
-                            _players[id].Ban();
+                        _players[player.Id].Ban();
 
-                            Console.WriteLine($"Игрок под ID {id} успешно забанен...");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Игрок уже в бане...");
-                        }
+                        Console.WriteLine($"Игрок под ID {player.Id} успешно забанен");
                     }
                     else
                     {
-                        Console.WriteLine($"Игрока под ID {id} не существует...");
+                        Console.WriteLine("Игрок итак в бане");
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Неккоректный ввод...");
                 }
             }
         }
@@ -172,31 +158,18 @@ namespace ex41
 
             if (IsFilled())
             {
-                Console.Write("Игрока под каким ID вы хотите разбанить? ");
-
-                if (int.TryParse(Console.ReadLine(), out int id))
+                if (IsPlayerFoundById(out Player player))
                 {
-                    if (_players.ContainsKey(id))
+                    if (player.IsBanned)
                     {
-                        if (_players[id].IsBanned)
-                        {
-                            _players[id].UnBan();
+                        _players[player.Id].UnBan();
 
-                            Console.WriteLine($"Игрок под ID {id} успешно разбанен");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Игрок итак не в бане");
-                        }
+                        Console.WriteLine($"Игрок под ID {player.Id} успешно разбанен");
                     }
                     else
                     {
-                        Console.WriteLine($"Игрока под ID {id} не существует...");
+                        Console.WriteLine("Игрок итак не в бане");
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Неккоректный ввод...");
                 }
             }
         }
@@ -207,21 +180,18 @@ namespace ex41
 
             if (IsFilled())
             {
-                if (TryGetPlayer(out Player player))
+                if (IsPlayerFoundById(out Player player))
                 {
                     _players.Remove(player.Id);
-                    Console.WriteLine($"Игрок под ID {player.Id} успешно удален...");                    
-                }
-                else
-                {
-                    Console.WriteLine($"Игрока под ID {player.Id} не существует...");
+                    Console.WriteLine($"Игрок под ID {player.Id} успешно удален...");
                 }
             }
         }
 
-        private bool TryGetPlayer(out Player player)
+        private bool IsPlayerFoundById(out Player player)
         {
             Console.Write("Введите ID игрока: ");
+
             if (int.TryParse(Console.ReadLine(), out int id))
             {
                 if (_players.ContainsKey(id))
@@ -231,6 +201,7 @@ namespace ex41
                 }
                 else
                 {
+                    Console.WriteLine($"Игрока под ID {id} не существует...");
                     player = null;
                     return false;
                 }
@@ -256,7 +227,6 @@ namespace ex41
                 return false;
             }
         }
-
     }
 
     class Player
