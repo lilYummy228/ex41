@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 
 namespace ex41
 {
@@ -60,11 +61,11 @@ namespace ex41
     class Database
     {
         private Dictionary<int, Player> _players = new Dictionary<int, Player>();
-        private int _playerID;
+        private int _playerId;
 
         public Database()
         {
-            _playerID = 0;
+            _playerId = 0;
         }
 
         public void AddPlayer()
@@ -105,9 +106,9 @@ namespace ex41
                 return;
             }
 
-            _players.Add(_playerID, new Player(name, level, isBanned));
+            _players.Add(_playerId, new Player(_playerId, name, level, isBanned));
             Console.WriteLine($"Игрок с ником {name} успешно добавлен...");
-            _playerID++;
+            _playerId++;
         }
 
         public void ShowDataPlayers()
@@ -206,26 +207,41 @@ namespace ex41
 
             if (IsFilled())
             {
-                Console.WriteLine("Игрока под каким ID вы хотите удалить? ");
-
-                if (int.TryParse(Console.ReadLine(), out int id))
+                if (TryGetPlayer(out Player player))
                 {
-                    if (_players.ContainsKey(id))
-                    {
-                        _players.Remove(id);
-
-                        Console.WriteLine($"Игрок под ID {id} успешно удален...");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Игрока под ID {id} не существует...");
-                    }
+                    _players.Remove(player.Id);
+                    Console.WriteLine($"Игрок под ID {player.Id} успешно удален...");                    
                 }
                 else
                 {
-                    Console.WriteLine("Неккоректный ввод...");
+                    Console.WriteLine($"Игрока под ID {player.Id} не существует...");
                 }
             }
+        }
+
+        private bool TryGetPlayer(out Player player)
+        {
+            Console.Write("Введите ID игрока: ");
+            if (int.TryParse(Console.ReadLine(), out int id))
+            {
+                if (_players.ContainsKey(id))
+                {
+                    player = _players[id];
+                    return true;
+                }
+                else
+                {
+                    player = null;
+                    return false;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Неккоректный ввод...");
+                player = null;
+                return false;
+            }
+
         }
 
         private bool IsFilled()
@@ -241,38 +257,41 @@ namespace ex41
             }
         }
 
-        class Player
+    }
+
+    class Player
+    {
+        public Player(int id, string nickName, int level, bool isBanned)
         {
-            public Player(string nickName, int level, bool isBanned)
+            Id = id;
+            NickName = nickName;
+            Level = level;
+            IsBanned = isBanned;
+        }
+
+        public int Id { get; private set; }
+        public string NickName { get; private set; }
+        public int Level { get; private set; }
+        public bool IsBanned { get; private set; }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"Имя игрока: {NickName}\nУровень игрока: {Level}");
+
+            if (IsBanned == true)
             {
-                NickName = nickName;
-                Level = level;
-                IsBanned = isBanned;
+                Console.WriteLine("Игрок забанен");
             }
+        }
 
-            public string NickName { get; private set; }
-            public int Level { get; private set; }
-            public bool IsBanned { get; private set; }
+        public void Ban()
+        {
+            IsBanned = true;
+        }
 
-            public void ShowInfo()
-            {
-                Console.WriteLine($"Имя игрока: {NickName}\nУровень игрока: {Level}");
-
-                if (IsBanned == true)
-                {
-                    Console.WriteLine("Игрок забанен");
-                }
-            }
-
-            public void Ban()
-            {
-                IsBanned = true;
-            }
-
-            public void UnBan()
-            {
-                IsBanned = false;
-            }
+        public void UnBan()
+        {
+            IsBanned = false;
         }
     }
 }
